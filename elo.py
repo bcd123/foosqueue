@@ -80,6 +80,9 @@ def printLadder(eloPointsByPlayer):
         print '%s\t%04d\t%04d' % (k, len(v)-1, v[-1])
 
 def findBestEloParameters(gameResults):
+    """Find the k,f pair that allows for the highest accuracy in
+    predicting the games in the input file.  Currently uses a
+    brute-force search over some range"""
     bestAccuracySoFar = 0.0
     for k in range(5,100,5):
         for f in range(10,1500,10):
@@ -93,11 +96,13 @@ def main(argv=None):
         argv = sys.argv
     
     parser = argparse.ArgumentParser(description='Compute Elo scores for foosball results')
-    parser.add_argument("results_filename")
+    parser.add_argument("results_filename", 
+                        help="one game per row: winner1 winner2 looser1 looser2")
     parser.add_argument("--elo_k", type=float, default=50.0)
     parser.add_argument("--elo_f", type=float, default=1000.0)
     parser.add_argument("-v", "--verbose", action="store_true")
-    parser.add_argument("--learn_parameters", action="store_true")
+    parser.add_argument("--learn_parameters", action="store_true", 
+                        help="Don't score.  Instead, find the k,f pair that provides the higest accuracy for the input data")
     args = parser.parse_args()
     
     gameResults = loadGameResultsFromFile(args.results_filename)
